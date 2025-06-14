@@ -1,12 +1,14 @@
 #define _CRT_SECURE_NO_WARNINGS
-#define _WIN32_WINNT 0x0A00 // Windows 10
+#define _WIN32_WINNT 0x0A00 // Windows 10 and later (including Windows 11)
+#define NTDDI_VERSION 0x0A00000B // Windows 10 21H2, compatible with Windows 11
 
 #include <stdio.h>
 #include <string.h>
 #include <windows.h>
+#include <wincrypt.h> // For MD5 hash computation
 
 #define MAX_SIGNATURES 10
-#define MAX_SIG_LENGTH 50
+#define MAX_SIG_LENGTH 33 // MD5 hash is 32 chars + null terminator
 
 char signatures[MAX_SIGNATURES][MAX_SIG_LENGTH];
 int num_signatures = 0;
@@ -37,27 +39,78 @@ void load_signatures(const char* sig_file) {
     fclose(file);
 }
 
-int scan_file(const char* filename) {
-    FILE* file = NULL;
-    errno_t err = fopen_s(&file, filename, "r");
-    if (err != 0 || file == NULL) {
-        printf("Error opening file %s! Error code: %d\n", filename, err);
+// Compute MD5 hash of a file
+int compute_file_hash(const char* filename, char* hash_str) {
+    HANDLE hFile = CreateFileA(filename, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (hFile == INVALID_HANDLE_VALUE) {
+        printf("Error opening file %s for hash computation!\n", filename);
         return 0;
     }
 
-    char buffer[100];
-    while (fgets(buffer, sizeof(buffer), file)) {
-        for (int i = 0; i < num_signatures; i++) {
-            if (strstr(buffer, signatures[i])) {
-                printf("Signature '%s' detected in %s!\n", signatures[i], filename);
-                fclose(file);
-                return 1;
-            }
+    HCRYPTPROV hProv = 0;
+    HCRYPTHASH hHash = 0;
+    if (!CryptAcquireContext(&hProv, NULL, NULL, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT)) {
+        printf("CryptAcquireContext failed: %lu\n", GetLastError());
+        CloseHandle(hFile);
+        return 0;
+    }
+
+    if (!CryptCreateHash(hProv, CALG_MD5, 0, 0, &hHash)) {
+        printf("CryptCreateHash failed: %lu\n", GetLastError());
+        CryptReleaseContext(hProv, 0);
+        CloseHandle(hFile);
+        return 0;
+    }
+
+    BYTE buffer[4096];
+    DWORD bytesRead;
+    while (ReadFile(hFile, buffer, sizeof(buffer), &bytesRead, NULL) && bytesRead > 0) {
+        if (!CryptHashData(hHash, buffer, bytesRead, 0)) {
+            printf("CryptHashData failed: %lu\n", GetLastError());
+            CryptDestroyHash(hHash);
+            CryptReleaseContext(hProv, 0);
+            CloseHandle(hFile);
+            return 0;
         }
     }
 
-    printf("No threats found in %s.\n", filename);
-    fclose(file);
+    BYTE hash[16]; // MD5 hash is 16 bytes
+    DWORD hashLen = sizeof(hash);
+    if (!CryptGetHashParam(hHash, HP_HASHVAL, hash, &hashLen, 0)) {
+        printf("CryptGetHashParam failed: %lu\n", GetLastError());
+        CryptDestroyHash(hHash);
+        CryptReleaseContext(hProv, 0);
+        CloseHandle(hFile);
+        return 0;
+    }
+
+    // Convert hash to hexadecimal string
+    for (int i = 0; i < hashLen; i++) {
+        snprintf(hash_str + (i * 2), 3, "%02x", hash[i]);
+    }
+    hash_str[32] = 0; // Null terminate
+
+    CryptDestroyHash(hHash);
+    CryptReleaseContext(hProv, 0);
+    CloseHandle(hFile);
+    return 1;
+}
+
+int scan_file(const char* filename) {
+    char file_hash[MAX_SIG_LENGTH];
+    if (!compute_file_hash(filename, file_hash)) {
+        printf("Failed to compute hash for %s.\n", filename);
+        return 0;
+    }
+
+    for (int i = 0; i < num_signatures; i++) {
+        if (_stricmp(file_hash, signatures[i]) == 0) {
+            printf("Threat detected in %s (MD5: %s)!\n", filename, file_hash);
+            return 1;
+        }
+    }
+
+    printf("No threats found in %s (MD5: %s).\n", filename, file_hash);
     return 0;
 }
 
@@ -91,7 +144,7 @@ void scan_directory(const char* dir_path) {
 }
 
 void monitor_directory(const char* dir_path) {
-    keep_monitoring = 1; // Reset the flag before starting monitoring
+    keep_monitoring = 1;
 
     WCHAR w_dir_path[MAX_PATH];
     MultiByteToWideChar(CP_ACP, 0, dir_path, -1, w_dir_path, MAX_PATH);

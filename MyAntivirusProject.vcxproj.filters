@@ -25,4 +25,7 @@
   <ItemGroup>
     <Text Include="signatures.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="MyAntivirusProject.exe.manifest" />
+  </ItemGroup>
 </Project>
