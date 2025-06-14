@@ -4,7 +4,6 @@ A simple antivirus scanner for Windows built in C.
 
 ## Overview
 This project is an antivirus scanner that can:
-- Scan files for known virus signatures using MD5 hashes.
 - Scan entire directories.
 - Load signatures from a database (`signatures.txt`).
 - Monitor a directory in real-time for new or modified files and scan them automatically.
