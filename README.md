@@ -86,8 +86,10 @@ Future Improvements
     Add logging of all events (scans, monitoring, detections) to scan_log.txt.
     Enhance the menu to allow viewing of logs.
     Improve error handling for edge cases (e.g., invalid signatures, file access issues).
-    Add support for dynamic signature updates (e.g., downloading new hashes from a server).
-## Contributing
+    Add support for dynamic signature updates (e.g., downloading new hashes from a server).   
+## Policies
 
-Interested in contributing? Please read our [Contributing Guidelines](CONTRIBUTING.md) to learn how to report bugs, suggest features, or submit code.    
+- **Usage Policy**: This project is a demo for educational purposes only and should not be used as a real antivirus solution. It is not designed to handle malicious files or protect against real threats.
+- **Security Policy**: For information on reporting security vulnerabilities, see our [Security Policy](SECURITY.md).
+- **Contribution Policy**: To contribute to the project, please review our [Contributing Guidelines](CONTRIBUTING.md) (to be added).
 
