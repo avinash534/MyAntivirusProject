@@ -10,7 +10,7 @@ This project is a demo and does not have official releases. The latest version i
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability in MyAntivirusProject, please report it responsibly by emailing me directly at avinash534@example.com. Include the following details:
+If you discover a security vulnerability in MyAntivirusProject, please report it responsibly by emailing me directly at https://github.com/avinash534/MyAntivirusProject/graphs/community. Include the following details:
 
 - A description of the vulnerability.
 - Steps to reproduce the issue.
