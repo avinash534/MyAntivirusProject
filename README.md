@@ -87,4 +87,7 @@ Future Improvements
     Enhance the menu to allow viewing of logs.
     Improve error handling for edge cases (e.g., invalid signatures, file access issues).
     Add support for dynamic signature updates (e.g., downloading new hashes from a server).
+## Contributing
+
+Interested in contributing? Please read our [Contributing Guidelines](CONTRIBUTING.md) to learn how to report bugs, suggest features, or submit code.    
 
