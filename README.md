@@ -1,4 +1,4 @@
-MyAntivirusProject
+#MyAntivirusProject
 A simple antivirus program for Windows that scans directories, monitors file changes in real-time, and detects threats using hash-based signature matching. This project is a demo to showcase basic antivirus functionality, including efficient signature detection using a hash map.
 Features
 
