@@ -1,0 +1,7 @@
+[Sat Jun 14 22:58:50 2025] Loaded 1 signatures from signatures.txt
+[Sat Jun 14 22:58:59 2025] Started scanning directory: C:\Test
+[Sat Jun 14 22:58:59 2025] Threat detected in C:\Test\eicar.txt (SHA-256: 275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f)
+[Sat Jun 14 22:58:59 2025] No threats found in C:\Test\test1.txt (SHA-256: 5fa767d2c107d3f754ff853838f1c92ab4d6d462636dac26337811677d24a23f)
+[Sat Jun 14 22:58:59 2025] No threats found in C:\Test\test2.txt (SHA-256: 8062c43bca1d21620b8daeabb2d011128ee2881868516cb9ba593cb54c15351f)
+[Sat Jun 14 22:58:59 2025] No threats found in C:\Test\test3.txt (SHA-256: 2f293f67aa33f2ce247b28d6fb2fef2623cfde731f96b3d7f84ae74e9e192bdd)
+[Sat Jun 14 22:58:59 2025] Finished scanning directory: C:\Test

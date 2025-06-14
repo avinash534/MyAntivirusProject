@@ -7,7 +7,6 @@
 #include <VersionHelpers.h> // For IsWindows10OrGreater
 
 // Declare functions and variables from file_handling.c
-extern char signatures[10][33]; // Updated MAX_SIG_LENGTH to 33
 extern int num_signatures;
 extern volatile int keep_monitoring;
 void load_signatures(const char* sig_file);
